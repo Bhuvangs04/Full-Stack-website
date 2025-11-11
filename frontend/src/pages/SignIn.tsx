@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,8 +29,7 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [suspensionData, setSuspensionData] = useState(null);
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("Manager");
-  const [secretCode, setSecretCode] = useState("");
+  const [role, setRole] = useState("Client");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -55,9 +54,6 @@ const SignIn = () => {
         password: xorEncrypt(password, import.meta.env.VITE_API_xorKey),
       };
 
-      if (role === "Manager") {
-        payload["secretCode"] = secretCode;
-      }
 
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/${role}/login`,
@@ -72,7 +68,6 @@ const SignIn = () => {
       );
 
       const data = await response.json();
-      console.log(data);
 
       if (
         data.message
@@ -105,12 +100,8 @@ const SignIn = () => {
             role: data.role,
           })
         );
-
         setEmail("");
         setPassword("");
-        if (role === "Manager") {
-          setSecretCode("");
-        }
         function getRandomString(length) {
           const characters =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -164,6 +155,10 @@ const SignIn = () => {
     }
   };
 
+  useEffect(() => {
+    setRole("Client");
+  }, []);
+
   return (
     <>
       {suspensionData ? (
@@ -188,43 +183,7 @@ const SignIn = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="role" className="font-medium">
-                        <span className="flex items-center gap-2">
-                          <UserCog className="h-4 w-4" />
-                          Select Account Type
-                        </span>
-                      </Label>
-                      <div className="relative">
-                        <select
-                          id="role"
-                          value={role}
-                          onChange={(e) => setRole(e.target.value)}
-                          className="w-full h-10 px-3 py-2 bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200 appearance-none"
-                          disabled={isLoading}
-                        >
-                          <option value="Manager">Admin Access Only</option>
-                          <option value="Client">
-                            User (Freelancer/Client)
-                          </option>
-                        </select>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-muted-foreground">
-                          <svg
-                            className="h-4 w-4 fill-current"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-
+                    <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="email" className="font-medium">
                         <span className="flex items-center gap-2">
@@ -264,32 +223,6 @@ const SignIn = () => {
                         disabled={isLoading}
                       />
                     </div>
-
-                    {role === "Manager" && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="space-y-2"
-                      >
-                        <Label htmlFor="secretCode" className="font-medium">
-                          <span className="flex items-center gap-2">
-                            <AlertTriangle className="h-4 w-4" />
-                            Secret Code
-                          </span>
-                        </Label>
-                        <Input
-                          id="secretCode"
-                          type="text"
-                          placeholder="Enter admin access code"
-                          value={secretCode}
-                          onChange={(e) => setSecretCode(e.target.value)}
-                          required
-                          className="focus:ring-2 focus:ring-primary/30"
-                          disabled={isLoading}
-                        />
-                      </motion.div>
-                    )}
 
                     <Button
                       type="submit"
