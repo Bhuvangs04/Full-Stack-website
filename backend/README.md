@@ -1,8 +1,8 @@
-# 🌐 Freelancer Hub Backend
+#  Freelancer Hub Backend
 
 Welcome to the backend repository for the Freelancer Hub website! This project is built using MongoDB, Express, JWT, Razorpay, and Nodemailer.
 
-## 🚀 Features
+## Features
 
 - **MongoDB**: Our database solution for storing user data and project information.
 - **Express**: A fast, unopinionated, minimalist web framework for Node.js.
@@ -10,7 +10,7 @@ Welcome to the backend repository for the Freelancer Hub website! This project i
 - **Razorpay**: Payment gateway integration for handling transactions.
 - **Nodemailer**: Sending emails for notifications and verifications.
 
-## 📂 Project Structure
+##  Project Structure
 
 ```
 /backend
@@ -22,7 +22,7 @@ Welcome to the backend repository for the Freelancer Hub website! This project i
 └── app.js
 ```
 
-## 🛠️ Installation
+##  Installation
 
 1. Clone the repository:
     ```sh
@@ -37,7 +37,7 @@ Welcome to the backend repository for the Freelancer Hub website! This project i
     npm install
     ```
 
-## ⚙️ Configuration
+## Configuration
 
 Create a `.env` file in the root directory and add the following environment variables:
 
@@ -54,7 +54,7 @@ EMAIL_USER=your_email
 EMAIL_PASS=your_email_password
 ```
 
-## 🚀 Usage
+## Usage
 
 Start the development server:
 ```sh
@@ -65,10 +65,10 @@ npm run dev
 
 For any inquiries, please reach out to us at [freelancer.hub.nextgen@gmail.com](mailto:freelancer.hub.nextgen@gmail.com).
 
-## 📜 License
+## License
 
 This project is licensed under the MIT License.
 
 ---
 
-Made with ❤️ by the Bhuvan G S
+Made with  by the Bhuvan G S

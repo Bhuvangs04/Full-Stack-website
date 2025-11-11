@@ -105,6 +105,198 @@ The base URL for all routes is `/api/v1` unless specified otherwise. All protect
 * **Request/Response Limit**: 50MB
 * **WebSocket**: Port 9000, Encryption using AES-256-GCM
 
+
+
+```mermaid
+---
+config:
+  layout: elk
+---
+
+erDiagram
+    User {
+        ObjectId _id PK
+        string username "Unique"
+        string email "Unique"
+        string password "Hashed"
+        string role "Required"
+        boolean isBanned
+        int Strikes "Default: 0"
+        string status
+        string profilePictureUrl
+        string resumeUrl
+        string bio
+        string location
+        string title
+        object[] experiences
+        string companyName
+        string Position
+        string Industry
+    }
+    Admin {
+        ObjectId _id PK
+        string username "Unique"
+        string email "Unique"
+        string secret_code
+    }
+    Project {
+        ObjectId _id PK
+        string title
+        number budget
+        string status
+        Date deadline
+        string[] skillsRequired
+        ObjectId clientId FK "references User (Client)"
+        ObjectId freelancerId FK "references User (Freelancer)"
+    }
+    OnGoingProjects {
+        ObjectId _id PK
+        string projectId FK "references Project"
+        string title
+        string freelancerId
+        number progress
+        number budget
+        object[] tasks
+        object[] files
+    }
+    Bid {
+        ObjectId _id PK
+        ObjectId projectId FK "references Project"
+        ObjectId freelancerId FK "references User"
+        number amount
+        string status
+    }
+    Escrow {
+        ObjectId _id PK
+        ObjectId projectId FK "references Project"
+        ObjectId clientId FK "references User"
+        ObjectId freelancerId FK "references User"
+        number amount
+        string status
+    }
+    FreelancerEscrow {
+        ObjectId _id PK
+        ObjectId projectId FK "references Project"
+        ObjectId freelancerId FK "references User"
+        number amount
+        string status
+    }
+    Transaction {
+        ObjectId _id PK
+        ObjectId escrowId FK "references Escrow"
+        string type
+        number amount
+        string status
+    }
+    Payment {
+        ObjectId _id PK
+        ObjectId userId FK "references User"
+        ObjectId projectId FK "references Project"
+        string transactionId "Unique"
+        number amount
+        string status
+    }
+    Refund {
+        ObjectId _id PK
+        ObjectId paymentId FK "references Payment"
+        ObjectId adminId FK "references Admin"
+        number refundAmount
+        string status
+    }
+    Dispute {
+        ObjectId _id PK
+        ObjectId projectId FK "references Project"
+        ObjectId clientId FK "references User"
+        ObjectId freelancerId FK "references User"
+        string raisedBy
+        string status
+        ObjectId resolvedByAdminId FK "references Admin"
+    }
+    Review {
+        string _id PK
+        string reviewerId FK "references User"
+        string reviewedId FK "references User"
+        string projectId FK "references Project"
+        number rating "1 to 5"
+    }
+    Chat {
+        ObjectId _id PK
+        ObjectId sender FK "references User"
+        ObjectId receiver FK "references User"
+        string message
+        string status
+    }
+    Action {
+        ObjectId _id PK
+        ObjectId userId FK "references User"
+        string action
+        Date timestamp
+    }
+    OldProject {
+        ObjectId _id PK
+        ObjectId freelancerId FK "references User"
+        string title
+        string[] frameworks
+    }
+    PortfolioView {
+        ObjectId _id PK
+        ObjectId freelancerId FK "references User"
+        string ip
+    }
+    Skill {
+        string _id PK
+        string name "Unique"
+    }
+    OTP_Input {
+        ObjectId _id PK
+        string email
+        string otp
+    }
+    AccountDetails {
+        string _id PK
+        string userId FK "references User"
+        string accountNumber "Unique"
+        string accountType
+    }
+    FundAccount {
+        ObjectId _id PK
+        string userId FK "references User"
+        string fundAccountId
+        string contactId
+    }
+    client_company {
+        ObjectId _id PK
+        ObjectId userId FK "references User"
+        string companyName
+        string type
+    }
+    User ||--o{ Action : "performs"
+    User ||--o{ Chat : "sends/receives"
+    User ||--o{ Project : "creates"
+    User ||--o{ Bid : "submits"
+    User ||--o{ Escrow : "isClient/Freelancer"
+    User ||--o{ FreelancerEscrow : "receives"
+    User ||--o{ Payment : "makes"
+    User ||--o{ Review : "gives/gets"
+    User ||--o{ Dispute : "isParticipant"
+    User ||--o{ OldProject : "owns"
+    User ||--o{ PortfolioView : "isViewed"
+    User ||--o{ AccountDetails : "owns"
+    User ||--o{ FundAccount : "owns"
+    User ||--o{ client_company : "isAssociated"
+    Project ||--|| OnGoingProjects : "hasOngoing"
+    Project ||--o{ Bid : "receives"
+    Project ||--|| Escrow : "isFunded"
+    Project ||--o{ Payment : "isFundedBy"
+    Project ||--o{ Dispute : "isSubjectTo"
+    Project ||--o{ Review : "isAbout"
+    Escrow ||--o{ Transaction : "generates"
+    Payment ||--o{ Refund : "isRefunded"
+    Admin ||--o{ Refund : "handles"
+    Admin ||--o{ Dispute : "resolves"
+```
+
+
 ### Common Error Structure
 
 All errors follow this JSON structure:
